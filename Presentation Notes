@@ -1,0 +1,139 @@
+Reactive Programming 
+
++ Declarative paradigm concerned with data streams 
+
+Imperative:
++ How to do something
++Sequential instructions
+
+Declarative:
++ What to do instead of how
+
+Data Stream: 
++ Sequence of events (sushi)
+
+Propagation of change: + when data is emitted the application will react in response
+
+
+Observable:
++Monitor data streams by subscribing to them 
++ Everyone who is sitting at the table is waiting for the sushi to come out
++ the subscription process would be waiting and using an ipad to order your sushi
+
++ the observable is the yt channel and the viewer is clicking subscribe button
+
+Observable and Observers
+
+```
+var train = Observable<Sushi>   
+
+//Kitchen -- the kitchen will place the sushi on the train
+train.onNExt(sushi)
+
+//restautant -- observer
+var user = 
+
+
+
+
+
+
+
+
+
+
+
+
+
+***** code because you forgot
+
+
+
+import RxSwift
+
+let train = Observable,just("Hello, world!")
+
+//train.subscribe({ (event: Event<String>) in  
+//print(event)
+//})
+
+train.subscribe(onNext: {sushi in
+print("Next |(sushi)")
+},
+onError: { error on
+print("Error \(error)")
+},
+onDispiosed: {
+print("onDisposed")
+})
+
+
+train.subscribe( onNext: {
+print($0)
+})
+
+Observable.....
+```
+
+
+
+
+Task Number 1: 
+Detect player clicks to shoot cannon
+
+Set up an observer that reacts to click events
+
+
+
+SUBJECTS 
++ Hybrids : Obseravers and observables at the same time
++ Multiple observers can be emitted at the same time if they are subscribed
+  + WHoever is listening to the emmits will react
++PUBLISH SUBJECTS 
+ + Broadcast events to currently existing subscribers
+
+
+OPERATORS
++ Help us write less code
++ manipulate observable events beofore they are emmitted
++ You can chain operators and do multiple things to an observable before it emmitts data
+
+
+you can google marble diagram and RxSwift has nice diagrams
+
+FILTERING OPERATOR
++ Only allows certain events to be emmitted
++ 
+
+GamePlayground
+```
+
+
+TouchesBegan -- everytime someone touches the screen it will call this function and emit the output
+userClickSubject
+.asObservable()
+.filter{self?.getNodeAtTouchLocation($0).name == ChildNodeName.board.rawValue} -- by using $0 it says gimme the event taht was emmited -- get its name
+.subscribe(onNext: {_ in 
+self.firePlayerBullets()
+
+
+
+
+
+
+****TASK 2: Detect when the game is over *****
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
