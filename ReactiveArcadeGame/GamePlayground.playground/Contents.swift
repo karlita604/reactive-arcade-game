@@ -39,7 +39,15 @@ extension GameScene {
     // Hint: [self.getNodeAtTouchLocation()] returns the location of a touch as a [SKNode]
     // Hint: [ChildNodeName.board.rawValue] is the name of the board node
     private func setUpFireBulletsObserver() {
-        // TODO: Complete during workshop
+        userClickSubject
+            .asObservable()
+            .filter { [weak self] touch in
+                self?.getNodeAtTouchLocation(touch).name == ChildNodeName.board.rawValue
+            }
+            .subscribe(onNext: { [weak self] _ in
+                self?.firePlayerBullets()
+            })
+            .disposed(by: disposeBag)
     }
     
     
@@ -49,23 +57,22 @@ extension GameScene {
     private func setUpGameOverObserver() {
         // the enemies have reached the bottom of the screen
         // This indicates that the enemies have "Invaded"
-        enemyLowestPosition
-            .map { position -> Bool in
-                return position < self.kMinEnemyBottomHeight
-            }
-            .subscribe(onNext: { enemiesInvaded in
-                if enemiesInvaded {
-                    self.gameOver()
+        var enemiesInvaded: Observable<Bool> {
+            return enemyLowestPosition
+                .map { [weak self] position in
+                    guard let this = self else { return false }
+                    return position < this.kMinEnemyBottomHeight
                 }
-            })
-
+                .distinctUntilChanged()
+        }
         
         // TASK #2 A
         // Set up an observable which emits True when the player's health is above 0
         // and otherwise emits false
         var playerStatus: Observable<Bool> {
-            // TODO: Complete during workshop, replace the return statement below
-            return Observable.just(true)
+            return playerHealthSubject
+                .map { $0 > 0 }
+                .distinctUntilChanged()
         }
         
         // TASK #2 B
@@ -74,8 +81,14 @@ extension GameScene {
         //   1) The player has died
         //   2) The enemies have invaded
         // Hint: Should react to the following observables [playerStatus] and [enemiesInvaded]
-        
-        // TODO: Complete during workshop
+        Observable.combineLatest(playerStatus, enemiesInvaded)
+            .subscribe(onNext: { [weak self] playerStatus, enemiesInvaded in
+                guard let this = self else { return }
+                if !playerStatus || enemiesInvaded {
+                    this.gameOver()
+                }
+            })
+            .disposed(by: disposeBag)
     }
     
     // Task # 3
@@ -85,7 +98,15 @@ extension GameScene {
     // Hint: Use [allEnemies] Subject to detect when no enemies are remaining
     // Hint: Chain the [map] and [filter] operators
     private func setUpPlayerWinsObserver() {
-        // TODO: Complete after workshop
+        allEnemies
+            .skip(1)
+            .asObservable()
+            .map { $0.isEmpty }
+            .filter { $0 == true }
+            .subscribe(onNext: { [weak self] _ in
+                self?.playerWins()
+            })
+            .disposed(by: disposeBag)
     }
     
     // Logs player Health and number of enemies to the console while the game is running.
